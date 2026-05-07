@@ -4,6 +4,7 @@ use App\Models\Order;
 use App\Services\Payments\ToyyibPayService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
@@ -27,6 +28,31 @@ new class extends Component {
     public string $productSku = 'CODEX-TSHIRT-BLACK';
     public int $unitPrice = 4900;
 
+    /**
+     * @return array<int, string>
+     */
+    public function malaysiaStates(): array
+    {
+        return [
+            'Johor',
+            'Kedah',
+            'Kelantan',
+            'Melaka',
+            'Negeri Sembilan',
+            'Pahang',
+            'Penang',
+            'Perak',
+            'Perlis',
+            'Sabah',
+            'Sarawak',
+            'Selangor',
+            'Terengganu',
+            'Kuala Lumpur',
+            'Labuan',
+            'Putrajaya',
+        ];
+    }
+
     public function getTotalAmountProperty(): int
     {
         return $this->unitPrice * $this->quantity;
@@ -46,7 +72,7 @@ new class extends Component {
             'addressLine1' => ['required', 'string', 'max:255'],
             'addressLine2' => ['nullable', 'string', 'max:255'],
             'city'         => ['required', 'string', 'max:100'],
-            'state'        => ['required', 'string', 'max:100'],
+            'state'        => ['required', 'string', Rule::in($this->malaysiaStates())],
             'postcode'     => ['required', 'string', 'max:20'],
             'country'      => ['required', 'string', 'max:100'],
             'size'         => ['required', 'in:S,M,L,XL,XXL'],
@@ -95,97 +121,120 @@ if ($this->gateway === 'stripe') {
 };
 ?>
 
-<div class="min-h-screen bg-zinc-50 px-4 py-10 text-zinc-950 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-zinc-950 px-4 py-10 text-zinc-50 sm:px-6 lg:px-8">
     <div class="mx-auto max-w-6xl">
 
         {{-- Header --}}
         <div class="mb-8">
-            <flux:button href="{{ route('landing') }}" wire:navigate variant="ghost" icon="arrow-left" size="sm">
+            <flux:button href="{{ route('landing') }}" wire:navigate variant="ghost" icon="arrow-left" size="sm" class="text-zinc-200 hover:bg-white/5">
                 Back to product
             </flux:button>
 
-            <flux:heading size="xl" class="mt-4">Checkout</flux:heading>
-            <flux:text class="mt-1">Complete your order for the I love Codex T-Shirt.</flux:text>
+            <flux:heading size="xl" class="mt-4 text-white">Checkout</flux:heading>
+            <flux:text class="mt-1 text-zinc-400">Complete your order for the I love Codex T-Shirt.</flux:text>
         </div>
 
         <form wire:submit="submit" class="grid gap-8 lg:grid-cols-[1fr_380px]">
 
             <div class="space-y-6">
 
-                {{-- Customer Details --}}
-                <div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-zinc-100">
-                    <flux:heading size="lg" class="mb-5">Customer Details</flux:heading>
+                <section class="overflow-hidden rounded-[28px] border border-zinc-800 bg-zinc-900 shadow-[0_28px_70px_rgba(0,0,0,0.35)]">
+                    <div class="grid gap-5 p-6 lg:grid-cols-[1fr_auto] lg:items-center lg:p-8">
+                        <div>
+                            <flux:text size="sm" class="uppercase tracking-[0.18em] text-zinc-500">Checkout</flux:text>
+                            <flux:heading size="lg" class="mt-1 text-white">I love Codex T-Shirt</flux:heading>
+                            <p class="mt-2 max-w-xl text-sm leading-6 text-zinc-400">
+                                Black tee with a clean white print. Keep the flow simple, finish the order, and move on.
+                            </p>
+                        </div>
+
+                        <div class="rounded-2xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-right">
+                            <div class="text-xs uppercase tracking-[0.2em] text-zinc-500">Total</div>
+                            <div class="mt-1 text-2xl font-semibold text-white">{{ $this->formattedTotal }}</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="rounded-[28px] border border-zinc-800 bg-zinc-900 p-6 shadow-sm sm:p-7">
+                    <div class="mb-5 flex items-center justify-between gap-4">
+                        <flux:heading size="lg" class="!text-white">Customer Details</flux:heading>
+                        <flux:text size="sm" class="text-zinc-400">Required</flux:text>
+                    </div>
 
                     <div class="grid gap-4">
                         <flux:field>
-                            <flux:label>Full Name</flux:label>
-                            <flux:input wire:model="name" type="text" placeholder="Ahmad bin Ali" />
+                            <flux:label class="!text-zinc-200">Full Name</flux:label>
+                            <flux:input wire:model="name" type="text" placeholder="Ahmad bin Ali" class="border-zinc-700 bg-zinc-800 !text-zinc-50 placeholder:text-zinc-500" />
                             <flux:error name="name" />
                         </flux:field>
 
                         <flux:field>
-                            <flux:label>Email Address</flux:label>
-                            <flux:input wire:model="email" type="email" placeholder="ahmad@example.com" />
+                            <flux:label class="!text-zinc-200">Email Address</flux:label>
+                            <flux:input wire:model="email" type="email" placeholder="ahmad@example.com" class="border-zinc-700 bg-zinc-800 !text-zinc-50 placeholder:text-zinc-500" />
                             <flux:error name="email" />
                         </flux:field>
 
                         <flux:field>
-                            <flux:label>Phone Number</flux:label>
-                            <flux:input wire:model="phone" type="tel" value="60193831240" placeholder="+60 12-345 6789" />
+                            <flux:label class="!text-zinc-200">Phone Number</flux:label>
+                            <flux:input wire:model="phone" type="tel" value="60193831240" placeholder="+60 12-345 6789" class="border-zinc-700 bg-zinc-800 !text-zinc-50 placeholder:text-zinc-500" />
                             <flux:error name="phone" />
                         </flux:field>
                     </div>
-                </div>
+                </section>
 
-                {{-- Shipping Address --}}
-                <div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-zinc-100">
-                    <flux:heading size="lg" class="mb-5">Shipping Address</flux:heading>
+                <section class="rounded-[28px] border border-zinc-800 bg-zinc-900 p-6 shadow-sm sm:p-7">
+                    <flux:heading size="lg" class="mb-5 !text-white">Shipping Address</flux:heading>
 
                     <div class="grid gap-4">
                         <flux:field>
-                            <flux:label>Address Line 1</flux:label>
-                            <flux:input wire:model="addressLine1" type="text" value="No. 12, Jalan Utama" />
+                            <flux:label class="!text-zinc-200">Address Line 1</flux:label>
+                            <flux:input wire:model="addressLine1" type="text" value="No. 12, Jalan Utama" class="border-zinc-700 bg-zinc-800 !text-zinc-50 placeholder:text-zinc-500" />
                             <flux:error name="addressLine1" />
                         </flux:field>
 
                         <flux:field>
-                            <flux:label>
+                            <flux:label class="!text-zinc-200">
                                 Address Line 2
-                                <flux:badge size="sm" variant="pill" class="ml-2">Optional</flux:badge>
+                                <flux:badge size="sm" variant="pill" class="ml-2 border border-zinc-700 bg-zinc-800 text-zinc-300">Optional</flux:badge>
                             </flux:label>
-                            <flux:input wire:model="addressLine2" type="text" value="Taman Sri Muda" />
+                            <flux:input wire:model="addressLine2" type="text" value="Taman Sri Muda" class="border-zinc-700 bg-zinc-800 !text-zinc-50 placeholder:text-zinc-500" />
                         </flux:field>
 
                         <div class="grid gap-4 sm:grid-cols-3">
                             <flux:field>
-                                <flux:label>City</flux:label>
-                                <flux:input wire:model="city" type="text" value="Shah Alam" />
+                                <flux:label class="!text-zinc-200">City</flux:label>
+                                <flux:input wire:model="city" type="text" value="Shah Alam" class="border-zinc-700 bg-zinc-800 !text-zinc-50 placeholder:text-zinc-500" />
                                 <flux:error name="city" />
                             </flux:field>
 
                             <flux:field>
-                                <flux:label>State</flux:label>
-                                <flux:input wire:model="state" type="text" value="Selangor" />
+                                <flux:label class="!text-zinc-200">State</flux:label>
+                                <flux:select wire:model="state" placeholder="Select state" class="border-zinc-700 bg-zinc-800 !text-zinc-50">
+                                    @foreach ($this->malaysiaStates() as $malaysiaState)
+                                        <flux:select.option :value="$malaysiaState">
+                                            {{ $malaysiaState }}
+                                        </flux:select.option>
+                                    @endforeach
+                                </flux:select>
                                 <flux:error name="state" />
                             </flux:field>
 
                             <flux:field>
-                                <flux:label>Postcode</flux:label>
-                                <flux:input wire:model="postcode" type="text" value="40150" />
+                                <flux:label class="!text-zinc-200">Postcode</flux:label>
+                                <flux:input wire:model="postcode" type="text" value="40150" class="border-zinc-700 bg-zinc-800 !text-zinc-50 placeholder:text-zinc-500" />
                                 <flux:error name="postcode" />
                             </flux:field>
                         </div>
                     </div>
-                </div>
+                </section>
 
-                {{-- Product Options --}}
-                <div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-zinc-100">
-                    <flux:heading size="lg" class="mb-5">Product Options</flux:heading>
+                <section class="rounded-[28px] border border-zinc-800 bg-zinc-900 p-6 shadow-sm sm:p-7">
+                    <flux:heading size="lg" class="mb-5 !text-white">Product Options</flux:heading>
 
                     <div class="grid gap-4 sm:grid-cols-2">
                         <flux:field>
-                            <flux:label>Size</flux:label>
-                            <flux:select wire:model.live="size">
+                            <flux:label class="!text-zinc-200">Size</flux:label>
+                            <flux:select wire:model.live="size" class="border-zinc-700 bg-zinc-800 !text-zinc-50">
                                 <flux:select.option value="S">S</flux:select.option>
                                 <flux:select.option value="M">M</flux:select.option>
                                 <flux:select.option value="L">L</flux:select.option>
@@ -196,18 +245,17 @@ if ($this->gateway === 'stripe') {
                         </flux:field>
 
                         <flux:field>
-                            <flux:label>Quantity</flux:label>
-                            <flux:input wire:model.live="quantity" type="number" min="1" max="10" />
+                            <flux:label class="!text-zinc-200">Quantity</flux:label>
+                            <flux:input wire:model.live="quantity" type="number" min="1" max="10" class="border-zinc-700 bg-zinc-800 !text-zinc-50 placeholder:text-zinc-500" />
                             <flux:error name="quantity" />
                         </flux:field>
                     </div>
-                </div>
+                </section>
 
-                {{-- Payment Method --}}
-                <div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-zinc-100">
-                    <flux:heading size="lg" class="mb-5">Payment Method</flux:heading>
+                <section class="rounded-[28px] border border-zinc-800 bg-zinc-900 p-6 shadow-sm sm:p-7">
+                    <flux:heading size="lg" class="mb-5 !text-white">Payment Method</flux:heading>
 
-                    <flux:radio.group wire:model="gateway" variant="cards" class="grid sm:grid-cols-2">
+                    <flux:radio.group wire:model="gateway" class="grid gap-3 sm:grid-cols-2">
                         <flux:radio
                             value="toyyibpay"
                             label="ToyyibPay"
@@ -221,24 +269,24 @@ if ($this->gateway === 'stripe') {
                     </flux:radio.group>
 
                     <flux:error name="gateway" />
-                </div>
+                </section>
 
             </div>
 
             {{-- Order Summary --}}
-            <aside class="h-fit rounded-2xl bg-white p-6 shadow-sm ring-1 ring-zinc-100 lg:sticky lg:top-8">
-                <flux:heading size="lg" class="mb-5">Order Summary</flux:heading>
+            <aside class="h-fit rounded-[28px] border border-zinc-800 bg-zinc-900 p-6 shadow-sm lg:sticky lg:top-8 text-zinc-100">
+                <flux:heading size="lg" class="mb-5 !text-white">Order Summary</flux:heading>
 
                 <div class="flex gap-4">
                     <img
                         src="{{ asset('images/products/codex-shirt.png') }}"
                         alt="I love Codex T-Shirt"
-                        class="h-20 w-20 rounded-xl object-cover"
+                        class="h-20 w-20 rounded-xl border border-zinc-700 object-cover"
                     >
                     <div>
-                        <p class="font-semibold">{{ $productName }}</p>
-                        <flux:text size="sm">Black / Size {{ $size }}</flux:text>
-                        <p class="mt-1 font-medium">RM49.00</p>
+                        <p class="font-semibold text-white">{{ $productName }}</p>
+                        <flux:text size="sm" class="text-zinc-400">Black / Size {{ $size }}</flux:text>
+                        <p class="mt-1 font-medium text-white">{{ $this->formattedTotal }}</p>
                     </div>
                 </div>
 
@@ -246,33 +294,29 @@ if ($this->gateway === 'stripe') {
 
                 <div class="space-y-2 text-sm">
                     <div class="flex justify-between">
-                        <flux:text>Quantity</flux:text>
-                        <span>{{ $quantity }}</span>
+                        <flux:text class="text-zinc-100!">Quantity</flux:text>
+                        <span class="text-white">{{ $quantity }}</span>
                     </div>
                     <div class="flex justify-between">
-                        <flux:text>Subtotal</flux:text>
-                        <span>{{ $this->formattedTotal }}</span>
+                        <flux:text class="text-zinc-100!">Subtotal</flux:text>
+                        <span class="text-white">{{ $this->formattedTotal }}</span>
                     </div>
                     <div class="flex justify-between">
-                        <flux:text>Shipping</flux:text>
-                        <span>Included</span>
+                        <flux:text class="text-zinc-100!">Shipping</flux:text>
+                        <span class="text-white">Included</span>
                     </div>
                 </div>
 
                 <flux:separator class="my-5" />
 
                 <div class="flex justify-between font-bold">
-                    <span>Total</span>
-                    <span>{{ $this->formattedTotal }}</span>
+                    <span class="text-white">Total</span>
+                    <span class="text-white">{{ $this->formattedTotal }}</span>
                 </div>
 
                 <flux:button type="submit" variant="primary" class="mt-6 w-full">
                     Place Order
                 </flux:button>
-
-                <flux:text size="sm" class="mt-3 text-center">
-                    Payment integration coming next step.
-                </flux:text>
             </aside>
         </form>
     </div>
