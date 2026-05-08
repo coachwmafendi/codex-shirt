@@ -69,6 +69,17 @@ new class extends Component {
                 'default_size' => 'Single sticker',
                 'size_label' => 'Variant',
             ],
+            'pin' => [
+                'name' => 'Codex Pin Badge',
+                'sku' => 'CODEX-PIN',
+                'image' => asset('images/products/codex-pin.png'),
+                'description' => 'A small enamel pin badge for your bag, jacket, or lanyard.',
+                'price' => 100,
+                'requires_size' => false,
+                'size_options' => [],
+                'default_size' => 'Standard',
+                'size_label' => 'Variant',
+            ],
         ];
     }
 

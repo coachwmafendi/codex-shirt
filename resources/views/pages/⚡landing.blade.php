@@ -29,6 +29,16 @@ new class extends Component {
                 'highlight' => 'Single sticker',
                 'detail' => 'Simple sticker for your daily setup.',
             ],
+            'pin' => [
+                'name' => 'Codex Pin Badge',
+                'description' => 'A small enamel pin badge for your bag, jacket, or lanyard.',
+                'price' => 100,
+                'image' => asset('images/products/codex-pin.png'),
+                'checkout' => route('checkout', ['product' => 'pin']),
+                'cta' => 'Shop Pin',
+                'highlight' => 'Pin badge',
+                'detail' => 'Compact enamel pin for everyday carry.',
+            ],
         ];
     }
 
@@ -73,9 +83,17 @@ new class extends Component {
                 >
                     Buy Sticker — {{ $this->formatPrice($this->products()['sticker']['price']) }}
                 </a>
+
+                <a
+                    href="{{ $this->products()['pin']['checkout'] }}"
+                    wire:navigate
+                    class="rounded-2xl border border-zinc-200 px-6 py-4 text-base font-semibold text-zinc-900 transition hover:bg-zinc-50"
+                >
+                    Buy Pin — {{ $this->formatPrice($this->products()['pin']['price']) }}
+                </a>
             </div>
 
-            <div class="grid max-w-xl grid-cols-3 gap-4 border-t border-zinc-200 pt-8">
+            <div class="grid max-w-xl grid-cols-4 gap-4 border-t border-zinc-200 pt-8">
                 <div>
                     <p class="text-2xl font-bold">RM49</p>
                     <p class="text-sm text-zinc-500">T-shirt</p>
@@ -84,6 +102,11 @@ new class extends Component {
                 <div>
                     <p class="text-2xl font-bold">RM5</p>
                     <p class="text-sm text-zinc-500">Sticker</p>
+                </div>
+
+                <div>
+                    <p class="text-2xl font-bold">RM1</p>
+                    <p class="text-sm text-zinc-500">Pin badge</p>
                 </div>
 
                 <div>
