@@ -3,11 +3,38 @@
 use Livewire\Component;
 
 new class extends Component {
-    public int $price = 4900;
-
-    public function getFormattedPriceProperty(): string
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function products(): array
     {
-        return 'RM' . number_format($this->price / 100, 2);
+        return [
+            'shirt' => [
+                'name' => 'I love Codex T-Shirt',
+                'description' => 'A clean black tee for builders, coders, and people who ship.',
+                'price' => 4900,
+                'image' => asset('images/products/codex-shirt.png'),
+                'checkout' => route('checkout', ['product' => 'shirt']),
+                'cta' => 'Shop Shirt',
+                'highlight' => 'Launch price',
+                'detail' => 'Black tee with a large white print.',
+            ],
+            'sticker' => [
+                'name' => 'Codex Sticker',
+                'description' => 'A compact sticker for laptops, notebooks, and gear.',
+                'price' => 500,
+                'image' => asset('images/products/codex-sticker.jpg'),
+                'checkout' => route('checkout', ['product' => 'sticker']),
+                'cta' => 'Shop Sticker',
+                'highlight' => 'Single sticker',
+                'detail' => 'Simple sticker for your daily setup.',
+            ],
+        ];
+    }
+
+    public function formatPrice(int $price): string
+    {
+        return 'RM' . number_format($price / 100, 2);
     }
 };
 ?>
@@ -25,37 +52,38 @@ new class extends Component {
                 </h1>
 
                 <p class="max-w-xl text-lg leading-8 text-zinc-600">
-                    A clean black tee for builders, coders, and people who ship.
-                    Bold white print. Simple. Direct. Made for daily wear.
+                    Two small pieces of merch for people who ship: the original tee and a new sticker drop.
+                    Keep it simple, choose your item, and check out in one flow.
                 </p>
             </div>
 
             <div class="flex flex-wrap items-center gap-4">
                 <a
-                    href="{{ route('checkout') }}"
+                    href="{{ $this->products()['shirt']['checkout'] }}"
                     wire:navigate
                     class="rounded-2xl bg-zinc-950 px-6 py-4 text-base font-semibold text-white shadow-sm transition hover:bg-zinc-800"
                 >
-                    Buy Now — {{ $this->formattedPrice }}
+                    Buy Shirt — {{ $this->formatPrice($this->products()['shirt']['price']) }}
                 </a>
 
                 <a
-                    href="#details"
+                    href="{{ $this->products()['sticker']['checkout'] }}"
+                    wire:navigate
                     class="rounded-2xl border border-zinc-200 px-6 py-4 text-base font-semibold text-zinc-900 transition hover:bg-zinc-50"
                 >
-                    View Details
+                    Buy Sticker — {{ $this->formatPrice($this->products()['sticker']['price']) }}
                 </a>
             </div>
 
             <div class="grid max-w-xl grid-cols-3 gap-4 border-t border-zinc-200 pt-8">
                 <div>
                     <p class="text-2xl font-bold">RM49</p>
-                    <p class="text-sm text-zinc-500">Launch price</p>
+                    <p class="text-sm text-zinc-500">T-shirt</p>
                 </div>
 
                 <div>
-                    <p class="text-2xl font-bold">S–XXL</p>
-                    <p class="text-sm text-zinc-500">Available sizes</p>
+                    <p class="text-2xl font-bold">RM5</p>
+                    <p class="text-sm text-zinc-500">Sticker</p>
                 </div>
 
                 <div>
@@ -76,28 +104,49 @@ new class extends Component {
         </div>
     </section>
 
-    <section id="details" class="border-t border-zinc-200 bg-zinc-50 px-6 py-20 lg:px-8">
-        <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-3">
-            <div class="rounded-3xl bg-white p-8 shadow-sm">
-                <h2 class="text-xl font-bold">Bold everyday tee</h2>
-                <p class="mt-3 text-zinc-600">
-                    Black T-shirt with large white “I love Codex.” print. Easy to match, easy to wear.
-                </p>
-            </div>
+    <section class="border-t border-zinc-200 bg-zinc-50 px-6 py-20 lg:px-8">
+        <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-2">
+            @foreach ($this->products() as $product)
+                <article class="rounded-3xl bg-white p-8 shadow-sm">
+                    <div class="grid gap-6 lg:grid-cols-[180px_1fr] lg:items-center">
+                        <img
+                            src="{{ $product['image'] }}"
+                            alt="{{ $product['name'] }}"
+                            class="w-full rounded-2xl border border-zinc-200 object-cover"
+                        >
 
-            <div class="rounded-3xl bg-white p-8 shadow-sm">
-                <h2 class="text-xl font-bold">Simple checkout</h2>
-                <p class="mt-3 text-zinc-600">
-                    Pay securely using ToyyibPay or Stripe. Choose your size and quantity during checkout.
-                </p>
-            </div>
+                        <div>
+                            <p class="text-sm font-medium uppercase tracking-[0.18em] text-zinc-400">
+                                {{ $product['highlight'] }}
+                            </p>
 
-            <div class="rounded-3xl bg-white p-8 shadow-sm">
-                <h2 class="text-xl font-bold">For people who ship</h2>
-                <p class="mt-3 text-zinc-600">
-                    Made for developers, builders, makers, and anyone who loves turning ideas into products.
-                </p>
-            </div>
+                            <h2 class="mt-2 text-2xl font-bold text-zinc-950">
+                                {{ $product['name'] }}
+                            </h2>
+
+                            <p class="mt-3 text-zinc-600">
+                                {{ $product['description'] }}
+                            </p>
+
+                            <p class="mt-4 text-2xl font-bold text-zinc-950">
+                                {{ $this->formatPrice($product['price']) }}
+                            </p>
+
+                            <p class="mt-1 text-sm text-zinc-500">
+                                {{ $product['detail'] }}
+                            </p>
+
+                            <a
+                                href="{{ $product['checkout'] }}"
+                                wire:navigate
+                                class="mt-6 inline-flex rounded-2xl bg-zinc-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-zinc-800"
+                            >
+                                {{ $product['cta'] }}
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            @endforeach
         </div>
     </section>
 </div>

@@ -72,7 +72,7 @@ new class extends Component {
                 </div>
 
                 <div>
-                    <flux:text size="sm">Size</flux:text>
+                    <flux:text size="sm">{{ $order->product_sku === 'CODEX-STICKER' ? 'Variant' : 'Size' }}</flux:text>
                     <p class="mt-0.5 font-semibold">{{ $order->size }}</p>
                 </div>
 
